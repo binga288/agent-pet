@@ -1,0 +1,56 @@
+{
+  "id": "daodun",
+  "displayName": "DaoDun",
+  "description": "A compact pixel-art meme warrior pet with a round dog-like body, a smug grin, a short sword, and a raised wooden shield.",
+  "spritesheetPath": "spritesheet.webp",
+  "schemaVersion": 1,
+  "frameWidth": 192,
+  "frameHeight": 208,
+  "animations": {
+    "idle": {
+      "row": 1,
+      "frames": 6,
+      "durationMs": 4290
+    },
+    "working": {
+      "row": 8,
+      "frames": 6,
+      "durationMs": 1800
+    },
+    "tool": {
+      "row": 2,
+      "frames": 8,
+      "durationMs": 1060
+    },
+    "waiting": {
+      "row": 4,
+      "frames": 4,
+      "durationMs": 1600
+    },
+    "ended": {
+      "row": 7,
+      "frames": 6,
+      "durationMs": 1800
+    },
+    "interrupted": {
+      "row": 6,
+      "frames": 8,
+      "durationMs": 2400
+    },
+    "failed": {
+      "row": 6,
+      "frames": 8,
+      "durationMs": 2400
+    },
+    "unknown": {
+      "row": 1,
+      "frames": 6,
+      "durationMs": 4290
+    }
+  },
+  "walkAnimation": {
+    "row": 3,
+    "frames": 8,
+    "durationMs": 1060
+  }
+}

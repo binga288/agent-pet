@@ -1,0 +1,56 @@
+{
+  "id": "bananacat",
+  "displayName": "BananaCat",
+  "description": "The beloved meme icon: a tiny orange tabby cat in a banana suit, with big sad shiny eyes. This spritesheet includes walking and idle frames.",
+  "spritesheetPath": "spritesheet.webp",
+  "schemaVersion": 1,
+  "frameWidth": 192,
+  "frameHeight": 208,
+  "animations": {
+    "idle": {
+      "row": 1,
+      "frames": 6,
+      "durationMs": 4290
+    },
+    "working": {
+      "row": 8,
+      "frames": 6,
+      "durationMs": 1800
+    },
+    "tool": {
+      "row": 2,
+      "frames": 8,
+      "durationMs": 1060
+    },
+    "waiting": {
+      "row": 4,
+      "frames": 4,
+      "durationMs": 1600
+    },
+    "ended": {
+      "row": 7,
+      "frames": 6,
+      "durationMs": 1800
+    },
+    "interrupted": {
+      "row": 6,
+      "frames": 8,
+      "durationMs": 2400
+    },
+    "failed": {
+      "row": 6,
+      "frames": 8,
+      "durationMs": 2400
+    },
+    "unknown": {
+      "row": 1,
+      "frames": 6,
+      "durationMs": 4290
+    }
+  },
+  "walkAnimation": {
+    "row": 3,
+    "frames": 8,
+    "durationMs": 1060
+  }
+}
