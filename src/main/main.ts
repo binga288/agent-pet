@@ -1,4 +1,6 @@
-import { defaultPetId, findPet, parsePet } from '../shared/pets';
+import { defaultPetId, findPet } from '../shared/pets';
+import { parsePet } from '../shared/pet-manifest';
+import { focusProcess } from './focus-process';
 import { app, BrowserWindow, clipboard, ipcMain, Menu, nativeImage, protocol, screen, shell, Tray } from 'electron';
 import { randomBytes } from 'node:crypto';
 import { mkdirSync, writeFileSync, existsSync, unlinkSync, copyFileSync, renameSync, readFileSync, readdirSync } from 'node:fs';
@@ -17,7 +19,7 @@ import { buildRelayCommand, buildRelayCommandWindows, buildClaudeRelayCommand, s
 import { installWslHooks, parseWslDistros, stableWslRelayPath, uninstallWslHooks, wslExecutable, wslHomePath, type WslHookTarget, type WslProvider } from '../integration/wsl';
 import { readSaved, saveState } from './storage';
 import type { AgentAppConfig, PetClickConfig, Preferences, UserPetMeta } from '../shared/api';
-import { fitPet } from '../shared/animation';
+import { fitPet } from '../shared/geometry';
 import type { AppSnapshot } from '../shared/api';
 import squirrelStartup from 'electron-squirrel-startup';
 
@@ -298,23 +300,12 @@ async function start() {
     const cfg=preferences.agentApp[provider];
     if(!cfg||cfg.type==='none')return {ok:false};
     const nameMap:Record<string,string>={'claude-desktop':'claude','wt':'WindowsTerminal','cmd':'cmd'};
-    let processName=cfg.type==='process'?(cfg.processName||''):nameMap[cfg.type]||'';
-    if(!/^[A-Za-z0-9._-]{1,80}$/.test(processName))return {ok:false};
-    // strip .exe suffix for Get-Process
-    const procArg=processName.replace(/\.exe$/i,'');
-    if(!/^[A-Za-z0-9._-]{1,80}$/.test(procArg))return {ok:false};
-    const ps=`try{Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class AgentPetW32{[DllImport("user32.dll")]public static extern bool SetForegroundWindow(IntPtr h);[DllImport("user32.dll")]public static extern bool ShowWindow(IntPtr h,int n);}'}catch{}; $p=Get-Process -Name '${procArg}' -EA SilentlyContinue|Where-Object{$_.MainWindowHandle -ne 0}|Select-Object -First 1; if($p){[AgentPetW32]::ShowWindow($p.MainWindowHandle,9);[AgentPetW32]::SetForegroundWindow($p.MainWindowHandle)}`;
-    try{await execFileAsync('powershell.exe',['-NonInteractive','-NoProfile','-Command',ps],{windowsHide:true,timeout:5000});return {ok:true};}
-    catch{return {ok:false};}
+    const processName=cfg.type==='process'?(cfg.processName||''):nameMap[cfg.type]||'';
+    return focusProcess(processName);
   });
   ipcMain.handle('pet:focusProcess',async(event,processName:unknown)=>{
     if(!trusted(event.sender.id))throw Error('Untrusted');
-    if(typeof processName!=='string'||!/^[A-Za-z0-9._-]{1,80}$/.test(processName))return {ok:false};
-    const procArg=processName.replace(/\.exe$/i,'');
-    if(!/^[A-Za-z0-9._-]{1,80}$/.test(procArg))return {ok:false};
-    const ps=`try{Add-Type -TypeDefinition 'using System;using System.Runtime.InteropServices;public class AgentPetW32{[DllImport("user32.dll")]public static extern bool SetForegroundWindow(IntPtr h);[DllImport("user32.dll")]public static extern bool ShowWindow(IntPtr h,int n);}'}catch{}; $p=Get-Process -Name '${procArg}' -EA SilentlyContinue|Where-Object{$_.MainWindowHandle -ne 0}|Select-Object -First 1; if($p){[AgentPetW32]::ShowWindow($p.MainWindowHandle,9);[AgentPetW32]::SetForegroundWindow($p.MainWindowHandle)}`;
-    try{await execFileAsync('powershell.exe',['-NonInteractive','-NoProfile','-Command',ps],{windowsHide:true,timeout:5000});return {ok:true};}
-    catch{return {ok:false};}
+    return focusProcess(processName);
   });
   ipcMain.handle('pet:refreshUserPets',async event=>{
     if(!trusted(event.sender.id))throw Error('Untrusted');

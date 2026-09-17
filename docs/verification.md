@@ -36,7 +36,7 @@ npm run check
 npm run make
 ```
 
-There are no automated tests. `npm run check` runs TypeScript only. Behavioral verification is done manually and via live Playwright runs against the source or packaged app. Tests are only added when genuinely needed for long-term maintenance of non-obvious invariants.
+As of the 2026-09-17 maintenance refactor, `npm run check` runs TypeScript and Node regression tests in `tests/*.test.mjs`. These cover animation and presentation invariants; native interaction and packaged application behavior still require separate live verification. Older test counts above describe historical verification, not the current suite.
 
 ## Build correction
 

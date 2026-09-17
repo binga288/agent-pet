@@ -1,5 +1,17 @@
 # Architecture
 
+## Maintenance boundaries
+
+- `renderer/main.tsx` only mounts the selected view. `pet.tsx` owns pet interaction and `panel.tsx` owns the task center; `use-snapshot.ts` owns the IPC subscription lifecycle.
+- `shared/animation.ts` contains pure frame timing, bounds validation and status/direction selection. Change `frameAt` for frame progression or `selectAnimation` for animation selection without touching React or Electron.
+- `renderer/animation/playback.ts` owns the playback timeline and duplicate-frame suppression. Its clock/scheduler and draw callback are replaceable; the default retains the existing 40 ms interval. `sprite.tsx` only resolves assets, loads images and draws Canvas frames. Changing clip values restarts playback, while equivalent snapshot objects do not.
+- `shared/pet-manifest.ts` normalizes and validates role metadata without Vite. `shared/pets.ts` discovers bundled assets. Per-role animation data stays in `assets/*/pet.json`; the standard v2 mapping is in the parser.
+- `renderer/task-presentation.ts` owns display ranking and pet status selection. Notification scheduling remains in `core/notification-queue.ts`: its priority semantics differ from presentation ranking and are intentionally separate.
+- `shared/geometry.ts` owns screen placement, independently of animation timing.
+- `renderer/pet-actions.ts` routes configured clicks through the typed bridge. `main/focus-process.ts` provides the shared Windows focus implementation; IPC authorization remains in `main/main.ts`.
+
+Run `npm run check` for TypeScript and the Node regression tests. Tests cover timing boundaries, walking fallbacks, task priority, scheduler cleanup, bundled manifests, placement and click routing. No new runtime dependencies are required.
+
 ## Data flow
 
 ```text

@@ -14,7 +14,8 @@
     "build:relay": "node scripts/build-relay.mjs",
     "package": "npm run build:relay && electron-forge package",
     "make": "npm run build:relay && electron-forge make",
-    "check": "npm run typecheck"
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run typecheck && npm test"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.11.2",
